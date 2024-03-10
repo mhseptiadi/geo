@@ -1,40 +1,25 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { GeoController } from "../controller/geo.controller";
-import { GeoService } from "../service/geo.service";
-import { BadRequestException, INestApplication, ValidationPipe } from "@nestjs/common";
+import { INestApplication, ValidationPipe } from "@nestjs/common";
 import * as request from "supertest";
 import * as assert from "assert";
-import { JwtModule } from "@nestjs/jwt";
 import { vars } from "./vars";
 import { UsersService } from "../service/user.service";
 import { AuthService } from "../service/auth.service";
 import { AuthController } from "../controller/auth.controller";
+import { GeoServiceProvider } from "../provider/geo.service.provider";
+import * as fs from 'fs';
 
 describe('AppController', () => {
-
   let app: INestApplication;
   let geoController: GeoController;
   let authController: AuthController;
 
-
   beforeEach(async () => {
     const moduleRef: TestingModule = await Test.createTestingModule({
-      imports: [
-        JwtModule.register({
-          global: true,
-          secret: 'mysecret',
-          signOptions: { expiresIn: '3600s' },
-        }),
-      ],
-      controllers: [
-        GeoController,
-        AuthController,
-      ],
-      providers: [
-        GeoService,
-        UsersService,
-        AuthService,
-      ],
+      imports: vars.moduleImports,
+      controllers: [GeoController, AuthController],
+      providers: [GeoServiceProvider(`data-test/e2e`), UsersService, AuthService],
     }).compile();
 
     geoController = moduleRef.get<GeoController>(GeoController);
@@ -45,228 +30,227 @@ describe('AppController', () => {
     await app.init();
   });
 
-  describe('E2E POST /geo', function() {
-    it('send correct file', function(done) {
+  describe('E2E POST /geo', function () {
+    it('send correct file', function (done) {
       request(app.getHttpServer())
         .post('/geo')
         .set({ Authorization: `Bearer ${vars.adminToken}` })
-        .attach('file', './data/sample.geojson.json')
+        .attach('file', './data-test/test/sample.geojson.json')
         .expect(200)
-        .end(function(err, res) {
-          assert.deepEqual(
-            res.body,
-            {
-              "type": "Feature",
-              "geometry": {
-                "type": "Point",
-                "coordinates": [
-                  125.6,
-                  10.1
-                ]
-              },
-              "properties": {
-                "name": "Dinagat Islands"
-              }
+        .end(function (err, res) {
+          assert.deepEqual(res.body, {
+            type: 'Feature',
+            geometry: {
+              type: 'Point',
+              coordinates: [125.6, 10.1],
             },
-          )
-          return done();
-        });
-    });
-
-    it('send json file with invalid structure dto', function(done) {
-      request(app.getHttpServer())
-        .post('/geo')
-        .set({ Authorization: `Bearer ${vars.adminToken}` })
-        .attach('file', './data/invalid.geojson.json')
-        .expect(400)
-        .end(function(err, res) {
-          assert.deepEqual(
-            res.body,
-            {
-              message: vars.invalidGeoDtoValidationResponse,
-              error: 'Bad Request',
-              statusCode: 400,
-            })
-          return done();
-        });
-    });
-
-    it('send json file with invalid content', function(done) {
-      request(app.getHttpServer())
-        .post('/geo')
-        .set({ Authorization: `Bearer ${vars.adminToken}` })
-        .attach('file', './data/invalid.json')
-        .expect(400)
-        .end(function(err, res) {
-          assert.deepEqual(res.body, { message: 'Invalid Json file', error: 'Bad Request', statusCode: 400 })
-          return done();
-        });
-    });
-
-    it('send no file', function(done) {
-      request(app.getHttpServer())
-        .post('/geo')
-        .set({ Authorization: `Bearer ${vars.adminToken}` })
-        .expect(400)
-        .end(function(err, res) {
-          assert.deepEqual(res.body, { message: 'File is required', error: 'Bad Request', statusCode: 400 })
-          return done();
-        });
-    });
-
-    it('send non json', function(done) {
-      request(app.getHttpServer())
-        .post('/geo')
-        .set({ Authorization: `Bearer ${vars.adminToken}` })
-        .attach('file', './data/me.jpg')
-        .expect(400)
-        .end(function(err, res) {
-          assert.deepEqual(
-            res.body,
-            {
-              message: 'Validation failed (expected type is application/json)',
-              error: 'Bad Request',
-              statusCode: 400,
+            properties: {
+              name: 'Dinagat Islands',
             },
-          )
+          });
           return done();
         });
     });
 
-    it('invalid roles', function(done) {
+    it('send json file with invalid structure dto', function (done) {
       request(app.getHttpServer())
         .post('/geo')
-        .set({ Authorization: `Bearer ${vars.userToken}` })
-        .expect(401)
-        .end(function(err, res) {
-          assert.deepEqual(
-            res.body,
-            {
-              message: "Invalid roles",
-              error: "Unauthorized",
-              statusCode: 401,
-            },
-          )
+        .set({ Authorization: `Bearer ${vars.adminToken}` })
+        .attach('file', './data-test/test/invalid.geojson.json')
+        .expect(400)
+        .end(function (err, res) {
+          assert.deepEqual(res.body, {
+            message: vars.invalidGeoDtoValidationResponse,
+            error: 'Bad Request',
+            statusCode: 400,
+          });
           return done();
         });
     });
 
-    it('expired token', function(done) {
+    it('send json file with invalid content', function (done) {
+      request(app.getHttpServer())
+        .post('/geo')
+        .set({ Authorization: `Bearer ${vars.adminToken}` })
+        .attach('file', './data-test/test/invalid.json')
+        .expect(400)
+        .end(function (err, res) {
+          assert.deepEqual(res.body, {
+            message: 'Invalid Json file',
+            error: 'Bad Request',
+            statusCode: 400,
+          });
+          return done();
+        });
+    });
+
+    it('send no file', function (done) {
+      request(app.getHttpServer())
+        .post('/geo')
+        .set({ Authorization: `Bearer ${vars.adminToken}` })
+        .expect(400)
+        .end(function (err, res) {
+          assert.deepEqual(res.body, {
+            message: 'File is required',
+            error: 'Bad Request',
+            statusCode: 400,
+          });
+          return done();
+        });
+    });
+
+    it('send non json', function (done) {
+      request(app.getHttpServer())
+        .post('/geo')
+        .set({ Authorization: `Bearer ${vars.adminToken}` })
+        .attach('file', './data-test/test/me.jpg')
+        .expect(400)
+        .end(function (err, res) {
+          assert.deepEqual(res.body, {
+            message: 'Validation failed (expected type is application/json)',
+            error: 'Bad Request',
+            statusCode: 400,
+          });
+          return done();
+        });
+    });
+
+    it('expired token', function (done) {
       request(app.getHttpServer())
         .post('/geo')
         .set({ Authorization: `Bearer ${vars.expiredToken}` })
         .expect(401)
-        .end(function(err, res) {
-          assert.deepEqual(
-            res.body,
-            {
-              message: "Invalid token",
-              error: "Unauthorized",
-              statusCode: 401,
-            },
-          )
+        .end(function (err, res) {
+          assert.deepEqual(res.body, {
+            message: 'Invalid token',
+            error: 'Unauthorized',
+            statusCode: 401,
+          });
           return done();
         });
     });
 
-    it('invalid token', function(done) {
+    it('invalid token', function (done) {
       request(app.getHttpServer())
         .post('/geo')
         .set({ Authorization: `Bearer ${vars.invalidToken}` })
         .expect(401)
-        .end(function(err, res) {
-          assert.deepEqual(
-            res.body,
-            {
-              message: "Invalid token",
-              error: "Unauthorized",
-              statusCode: 401,
-            },
-          )
+        .end(function (err, res) {
+          assert.deepEqual(res.body, {
+            message: 'Invalid token',
+            error: 'Unauthorized',
+            statusCode: 401,
+          });
           return done();
         });
     });
 
+    it('processing geo json into db', async () => {
+      for (const file of fs.readdirSync('./data-test/e2e/')) {
+        if (fs.lstatSync(`./data-test/e2e/${file}`).isFile()) {
+          await fs.unlink(`./data-test/e2e/${file}`, () => {});
+        }
+      }
+
+      for (const file of fs.readdirSync('./data-test/test/')) {
+        fs.copyFileSync(`./data-test/test/${file}`, `./data-test/e2e/${file}`);
+      }
+
+      request(app.getHttpServer())
+        .post('/geo/process')
+        .set({ Authorization: `Bearer ${vars.adminToken}` })
+        .expect(200)
+        .end(function (err, res) {
+          assert.deepEqual(res.body, {
+            invalid: ['invalid.geojson.json', 'invalid.json', 'me.jpg'],
+            processed: ['sample.geojson.json'],
+          });
+        });
+    });
+
+    it('processing geo json non admin account', async () => {
+      request(app.getHttpServer())
+        .post('/geo/process')
+        .set({ Authorization: `Bearer ${vars.userToken}` })
+        .expect(200)
+        .end(function (err, res) {
+          assert.deepEqual(res.body, {
+            message: 'Invalid roles',
+            error: 'Unauthorized',
+            statusCode: 401,
+          });
+        });
+    });
   });
 
-  describe('E2E POST /auth', function() {
-    it('login correct', function(done) {
+  describe('E2E POST /auth', function () {
+    it('login correct', function (done) {
       request(app.getHttpServer())
         .post('/auth/login')
         .send({
-          "username": "test",
-          "password": "test"
+          username: 'test',
+          password: 'test',
         })
         .expect(200)
-        .end(function(err, res) {
+        .end(function (err, res) {
           assert.match(
             res.body.access_token,
-            /[a-zA-Z0-9\-]+\.[a-zA-Z0-9\-]+\.[a-zA-Z0-9\-]+/gm,
+            /[a-zA-Z0-9\-\_]+\.[a-zA-Z0-9\-\_]+\.[a-zA-Z0-9\-\_]+/gm,
           );
           return done();
         });
     });
 
-    it('login incorrect password', function(done) {
+    it('login incorrect password', function (done) {
       request(app.getHttpServer())
         .post('/auth/login')
         .send({
-          "username": "test",
-          "password": "test2"
+          username: 'test',
+          password: 'test2',
         })
         .expect(401)
-        .end(function(err, res) {
-          assert.deepEqual(
-            res.body,
-            {
-              message: "Unauthorized",
-              statusCode: 401,
-            },
-          )
+        .end(function (err, res) {
+          assert.deepEqual(res.body, {
+            message: 'Unauthorized',
+            statusCode: 401,
+          });
           return done();
         });
     });
 
-    it('login incorrect payload structure', function(done) {
+    it('login incorrect payload structure', function (done) {
       request(app.getHttpServer())
         .post('/auth/login')
-        .send({
-        })
+        .send({})
         .expect(400)
-        .end(function(err, res) {
-          assert.deepEqual(
-            res.body,
-            {
-              "message": [
-                "username must be a string",
-                "password must be a string"
-              ],
-              "error": "Bad Request",
-              "statusCode": 400
-            },
-          )
+        .end(function (err, res) {
+          assert.deepEqual(res.body, {
+            message: ['username must be a string', 'password must be a string'],
+            error: 'Bad Request',
+            statusCode: 400,
+          });
           return done();
         });
     });
 
-    it('admin profile', function(done) {
+    it('admin profile', function (done) {
       request(app.getHttpServer())
         .get('/auth/profile')
         .set({ Authorization: `Bearer ${vars.adminToken}` })
         .expect(200)
-        .end(function(err, res) {
-          assert.deepEqual(res.body.username, 'admin')
+        .end(function (err, res) {
+          assert.deepEqual(res.body.username, 'admin');
           return done();
         });
     });
 
-    it('user profile', function(done) {
+    it('user profile', function (done) {
       request(app.getHttpServer())
         .get('/auth/profile')
         .set({ Authorization: `Bearer ${vars.userToken}` })
         .expect(200)
-        .end(function(err, res) {
-          assert.deepEqual(res.body.username, 'user')
+        .end(function (err, res) {
+          assert.deepEqual(res.body.username, 'user');
           return done();
         });
     });

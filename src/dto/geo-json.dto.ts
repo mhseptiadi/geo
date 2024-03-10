@@ -1,6 +1,6 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsNumber, IsOptional, IsString, ValidateNested } from "class-validator";
-import { Type } from "class-transformer";
+import { ApiProperty } from '@nestjs/swagger';
+import { IsOptional, IsString, ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
 
 class geometryDto {
   @ApiProperty({
@@ -13,11 +13,8 @@ class geometryDto {
   @ApiProperty({
     description: 'Geo Json Geometry Coordinates',
   })
-  @IsNumber(null, {
-    each: true,
-  })
   @IsOptional()
-  public coordinates: number[];
+  public coordinates: any[];
 }
 
 export class GeoJsonDto {
@@ -31,7 +28,6 @@ export class GeoJsonDto {
   @ApiProperty({
     description: 'Geo Json geometry',
   })
-  // @IsOptional()
   @ValidateNested()
   @Type(() => GeoJsonDto)
   public geometry: geometryDto;

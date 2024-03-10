@@ -1,3 +1,7 @@
+import { JwtModule } from "@nestjs/jwt";
+import { MongooseModule } from "@nestjs/mongoose";
+import { GeoSchema, GeoSchemaName } from "../schema/geo.schema";
+
 export const vars: any = {
 
   correctGeoJson: {
@@ -75,4 +79,27 @@ export const vars: any = {
   expiredToken: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIiLCJyb2xlcyI6WyJ1c2VyIl0sImlhdCI6MTUxMDAxNjA0MiwiZXhwIjoxNTEwMDE5NjQyfQ.RcrcS4SW_v6jHqs-7syxi49qxt4tJMF4fdqxQ8aHhVE`,
   invalidToken: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIiLCJyb2xlcyI6WyJ1c2VyIl0sImlhdCI6MTcxMDAxNjA0MiwiZXhwIjoxOTEwMDE5NjQyfQ._-mmHTGcGyKAfCmT7ODNQMM1QlqYAM60fd-ynoZwW8Q`,
 
+  moduleImports: [
+    JwtModule.register({
+      global: true,
+      secret: 'mysecret',
+      signOptions: { expiresIn: '3600s' },
+    }),
+    MongooseModule.forRoot('mongodb://127.0.0.1:27017', {
+      dbName: 'geo',
+    }),
+    MongooseModule.forFeature([
+      {
+        name: GeoSchemaName,
+        schema: GeoSchema,
+      },
+    ]),
+  ],
+
+  testFiles: [
+    `invalid.geojson.json`,
+    `invalid.json`,
+    `sample.geojson.json`,
+    `me.jpg`,
+  ],
 };

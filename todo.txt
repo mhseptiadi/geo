@@ -13,7 +13,7 @@ Implement Data Reader Endpoint: (ok)
 - Details: Write custom validation pipes or middleware to validate incoming requests containing data.
   Provide informative error responses if validation fails, including details on which fields are incorrect.
 
-• Development of Data Processing Endpoint:
+• Development of Data Processing Endpoint: (ok)
 - Task: Create an endpoint in NestJS responsible for processing spatial data uploaded into the system.
 - Details: Implement logic to efficiently process uploaded data and store it in the database.
   Ensure the endpoint can handle large datasets and provide responses indicating the success or failure of the processing operation.

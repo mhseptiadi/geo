@@ -30,7 +30,9 @@
 
 ```bash
 $ npm install
-```
+
+$ mv .env.dist .env
+``` 
 
 ## Running the app
 

@@ -7,16 +7,17 @@ import { AuthController } from "./controller/auth.controller";
 import { MongooseModule } from "@nestjs/mongoose";
 import { GeoSchema, GeoSchemaName } from "./schema/geo.schema";
 import { GeoServiceProvider } from "./provider/geo.service.provider";
+import { environment } from "./environment/environment";
 
 @Module({
   imports: [
     JwtModule.register({
       global: true,
-      secret: 'mysecret',
-      signOptions: { expiresIn: '3600s' },
+      secret: environment.jwtSecret,
+      signOptions: { expiresIn: environment.jwtExp },
     }),
-    MongooseModule.forRoot('mongodb://127.0.0.1:27017', {
-      dbName: 'geo',
+    MongooseModule.forRoot(environment.mongodb, {
+      dbName: environment.dbName,
     }),
     MongooseModule.forFeature([
       {
@@ -27,7 +28,7 @@ import { GeoServiceProvider } from "./provider/geo.service.provider";
   ],
   controllers: [GeoController, AuthController],
   providers: [
-    GeoServiceProvider('data'),
+    GeoServiceProvider(environment.uploadPath),
     UsersService,
     AuthService,
   ],

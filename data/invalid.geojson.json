@@ -1,0 +1,10 @@
+{
+  "type": 123,
+  "geometry": {
+    "type": 123,
+    "coordinates": ["125.6", "10.1"]
+  },
+  "properties": {
+    "name": "Dinagat Islands"
+  }
+}

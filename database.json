@@ -1,0 +1,20 @@
+{
+  "test": {
+    "driver": "mongodb",
+    "database": "geo",
+    "host": "127.0.0.1",
+    "port": "27017"
+  },
+  "dev": {
+    "driver": "mongodb",
+    "database": "geo",
+    "host": "127.0.0.1",
+    "port": "27017"
+  },
+  "prod": {
+    "driver": "mongodb",
+    "database": "geo",
+    "host": "127.0.0.1",
+    "port": "27017"
+  }
+}

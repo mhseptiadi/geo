@@ -1,9 +1,8 @@
-import { JwtModule } from "@nestjs/jwt";
-import { MongooseModule } from "@nestjs/mongoose";
-import { GeoSchema, GeoSchemaName } from "../schema/geo.schema";
+import { JwtModule } from '@nestjs/jwt';
+import { MongooseModule } from '@nestjs/mongoose';
+import { GeoSchema, GeoSchemaName } from '../schema/geo.schema';
 
 export const vars: any = {
-
   correctGeoJson: {
     originalname: 'file.json',
     mimetype: 'application/json',
@@ -38,40 +37,34 @@ export const vars: any = {
 
   invalidGeoDtoValidationResponse: [
     {
-      "value": 123,
-      "property": "type",
-      "children": [],
-      "constraints": {
-        "isString": "type must be a string"
-      }
+      value: 123,
+      property: 'type',
+      children: [],
+      constraints: {
+        isString: 'type must be a string',
+      },
     },
     {
-      "value": {
-        "type": 123,
-        "coordinates": [
-          "125.6",
-          "10.1"
-        ]
+      value: {
+        type: 123,
+        coordinates: ['125.6', '10.1'],
       },
-      "property": "geometry",
-      "children": [
+      property: 'geometry',
+      children: [
         {
-          "target": {
-            "type": 123,
-            "coordinates": [
-              "125.6",
-              "10.1"
-            ]
+          target: {
+            type: 123,
+            coordinates: ['125.6', '10.1'],
           },
-          "value": 123,
-          "property": "type",
-          "children": [],
-          "constraints": {
-            "isString": "type must be a string"
-          }
-        }
-      ]
-    }
+          value: 123,
+          property: 'type',
+          children: [],
+          constraints: {
+            isString: 'type must be a string',
+          },
+        },
+      ],
+    },
   ],
 
   adminToken: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwicm9sZXMiOlsidXNlciIsImFkbWluIl0sImlhdCI6MTcxMDAxNjA0MiwiZXhwIjoxOTEwMDE5NjQyfQ.Gbw85jyEB_q57Dn06gRoG0iSpLk60V75PCAp-XFNAaI`,

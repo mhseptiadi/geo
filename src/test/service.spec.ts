@@ -7,7 +7,7 @@ import { vars } from './vars';
 import { UsersService } from '../service/user.service';
 import { AuthService } from '../service/auth.service';
 import * as fs from 'fs';
-import { GeoServiceProvider } from "../provider/geo.service.provider";
+import { GeoServiceProvider } from '../provider/geo.service.provider';
 
 describe('AppController', () => {
   let app: INestApplication;
@@ -18,7 +18,11 @@ describe('AppController', () => {
   beforeEach(async () => {
     const moduleRef: TestingModule = await Test.createTestingModule({
       imports: vars.moduleImports,
-      providers: [GeoServiceProvider(`data-test/unit-service`), UsersService, AuthService],
+      providers: [
+        GeoServiceProvider(`data-test/unit-service`),
+        UsersService,
+        AuthService,
+      ],
     }).compile();
 
     geoService = moduleRef.get<GeoService>(GeoService);
@@ -63,7 +67,10 @@ describe('AppController', () => {
       }
 
       for (const file of fs.readdirSync('./data-test/test/')) {
-        fs.copyFileSync(`./data-test/test/${file}`, `./data-test/unit-service/${file}`);
+        fs.copyFileSync(
+          `./data-test/test/${file}`,
+          `./data-test/unit-service/${file}`,
+        );
       }
 
       assert.deepEqual(await geoService.process(), {

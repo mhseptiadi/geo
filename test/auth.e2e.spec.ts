@@ -1,14 +1,13 @@
-import { Test, TestingModule } from "@nestjs/testing";
-import { GeoController } from "../src/controller/geo.controller";
-import { INestApplication, ValidationPipe } from "@nestjs/common";
-import * as request from "supertest";
-import * as assert from "assert";
-import { vars } from "../src/test/vars";
-import { UsersService } from "../src/service/user.service";
-import { AuthService } from "../src/service/auth.service";
-import { AuthController } from "../src/controller/auth.controller";
-import { GeoServiceProvider } from "../src/provider/geo.service.provider";
-import * as fs from 'fs';
+import { Test, TestingModule } from '@nestjs/testing';
+import { GeoController } from '../src/controller/geo.controller';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
+import * as request from 'supertest';
+import * as assert from 'assert';
+import { vars } from '../src/test/vars';
+import { UsersService } from '../src/service/user.service';
+import { AuthService } from '../src/service/auth.service';
+import { AuthController } from '../src/controller/auth.controller';
+import { GeoServiceProvider } from '../src/provider/geo.service.provider';
 
 describe('AppController', () => {
   let app: INestApplication;
@@ -18,7 +17,11 @@ describe('AppController', () => {
     const moduleRef: TestingModule = await Test.createTestingModule({
       imports: vars.moduleImports,
       controllers: [GeoController, AuthController],
-      providers: [GeoServiceProvider(`data-test/e2e`), UsersService, AuthService],
+      providers: [
+        GeoServiceProvider(`data-test/e2e`),
+        UsersService,
+        AuthService,
+      ],
     }).compile();
 
     authController = moduleRef.get<AuthController>(AuthController);

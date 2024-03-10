@@ -1,7 +1,6 @@
 import {
   Controller,
   FileTypeValidator,
-  Get,
   HttpCode,
   HttpStatus,
   ParseFilePipe,
@@ -12,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { GeoService } from '../service/geo.service';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiBody, ApiConsumes } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiConsumes } from '@nestjs/swagger';
 import { AuthGuard } from '../guard/auth.guard';
 import { Roles } from '../decorator/role.decorator';
 
@@ -35,6 +34,7 @@ export class GeoController {
       },
     },
   })
+  @ApiBearerAuth('BearerAuth')
   @HttpCode(HttpStatus.OK)
   @UseInterceptors(FileInterceptor('file'))
   public async geoJson(
@@ -49,6 +49,7 @@ export class GeoController {
   }
 
   @UseGuards(AuthGuard)
+  @ApiBearerAuth('BearerAuth')
   @Roles('admin')
   @Post('process')
   @HttpCode(HttpStatus.OK)

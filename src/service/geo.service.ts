@@ -62,7 +62,10 @@ export class GeoService {
           const json: string = fs.readFileSync(`./${this.dataPath}/${file}`, {
             encoding: 'utf8',
           });
-          const geoJson: GeoJsonDto = plainToClass(GeoJsonDto, JSON.parse(json));
+          const geoJson: GeoJsonDto = plainToClass(
+            GeoJsonDto,
+            JSON.parse(json),
+          );
           const validations: any[] = validateSync(geoJson);
           if (validations.length == 0) {
             // processing

@@ -19,7 +19,11 @@ describe('AppController', () => {
     const moduleRef: TestingModule = await Test.createTestingModule({
       imports: vars.moduleImports,
       controllers: [GeoController, AuthController],
-      providers: [GeoServiceProvider(`data-test/unit-controller`), UsersService, AuthService],
+      providers: [
+        GeoServiceProvider(`data-test/unit-controller`),
+        UsersService,
+        AuthService,
+      ],
     }).compile();
 
     geoController = moduleRef.get<GeoController>(GeoController);
@@ -65,7 +69,10 @@ describe('AppController', () => {
       }
 
       for (const file of fs.readdirSync('./data-test/test/')) {
-        fs.copyFileSync(`./data-test/test/${file}`, `./data-test/unit-controller/${file}`);
+        fs.copyFileSync(
+          `./data-test/test/${file}`,
+          `./data-test/unit-controller/${file}`,
+        );
       }
 
       assert.deepEqual(await geoController.process(), {

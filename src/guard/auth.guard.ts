@@ -27,12 +27,9 @@ export class AuthGuard implements CanActivate {
     let payload: any;
 
     try {
-      payload = await this.jwtService.verifyAsync(
-        token,
-        {
-          secret: 'mysecret'
-        }
-      );
+      payload = await this.jwtService.verifyAsync(token, {
+        secret: 'mysecret',
+      });
 
       request['user'] = payload;
     } catch {
@@ -40,7 +37,9 @@ export class AuthGuard implements CanActivate {
     }
 
     if (rolesReflection.length > 0) {
-      const intersect: string[] = rolesReflection.filter((value: string) => payload.roles.includes(value));
+      const intersect: string[] = rolesReflection.filter((value: string) =>
+        payload.roles.includes(value),
+      );
       if (intersect.length == 0) {
         throw new UnauthorizedException(`Invalid roles`);
       }
@@ -55,7 +54,10 @@ export class AuthGuard implements CanActivate {
   }
 
   private extractRolesFromDecorator(context: ExecutionContext): string[] {
-    const roles: string[] = this.reflector.get<string[]>('roles', context.getHandler());
+    const roles: string[] = this.reflector.get<string[]>(
+      'roles',
+      context.getHandler(),
+    );
 
     if (!roles) {
       return this.reflector.get<string[]>('roles', context.getClass());

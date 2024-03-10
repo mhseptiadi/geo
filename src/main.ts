@@ -1,8 +1,8 @@
-import { NestFactory } from "@nestjs/core";
-import { AppModule } from "./app.module";
-import { ValidationPipe } from "@nestjs/common";
-import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
-import { environment } from "./environment/environment";
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+import { ValidationPipe } from '@nestjs/common';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { environment } from './environment/environment';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -14,7 +14,16 @@ async function bootstrap() {
     .setDescription('GeoJson')
     .setVersion('1.0')
     .addTag('GeoJson')
-    .addBearerAuth()
+    .addBearerAuth(
+      {
+        description: 'JWT Authorization',
+        type: 'http',
+        in: 'header',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+      },
+      'BearerAuth',
+    )
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

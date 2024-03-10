@@ -29,7 +29,7 @@ describe('AppController', () => {
   });
 
   describe('E2E POST /geo', function () {
-    it('send correct file', function (done) {
+    it('upload correct file', function (done) {
       request(app.getHttpServer())
         .post('/geo')
         .set({ Authorization: `Bearer ${vars.adminToken}` })
@@ -50,7 +50,7 @@ describe('AppController', () => {
         });
     });
 
-    it('send json file with invalid structure dto', function (done) {
+    it('upload json file with invalid structure dto', function (done) {
       request(app.getHttpServer())
         .post('/geo')
         .set({ Authorization: `Bearer ${vars.adminToken}` })
@@ -66,7 +66,7 @@ describe('AppController', () => {
         });
     });
 
-    it('send json file with invalid content', function (done) {
+    it('upload json file with invalid content', function (done) {
       request(app.getHttpServer())
         .post('/geo')
         .set({ Authorization: `Bearer ${vars.adminToken}` })
@@ -82,7 +82,7 @@ describe('AppController', () => {
         });
     });
 
-    it('send no file', function (done) {
+    it('upload no file', function (done) {
       request(app.getHttpServer())
         .post('/geo')
         .set({ Authorization: `Bearer ${vars.adminToken}` })
@@ -97,7 +97,7 @@ describe('AppController', () => {
         });
     });
 
-    it('send non json', function (done) {
+    it('upload non json', function (done) {
       request(app.getHttpServer())
         .post('/geo')
         .set({ Authorization: `Bearer ${vars.adminToken}` })
@@ -166,7 +166,7 @@ describe('AppController', () => {
         });
     });
 
-    it('processing geo json non admin account', async () => {
+    it('processing geo json using user token', async () => {
       request(app.getHttpServer())
         .post('/geo/process')
         .set({ Authorization: `Bearer ${vars.userToken}` })

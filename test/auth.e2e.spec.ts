@@ -78,7 +78,7 @@ describe('AppController', () => {
         });
     });
 
-    it('admin profile', function (done) {
+    it('using admin profile', function (done) {
       request(app.getHttpServer())
         .get('/auth/profile')
         .set({ Authorization: `Bearer ${vars.adminToken}` })
@@ -89,7 +89,7 @@ describe('AppController', () => {
         });
     });
 
-    it('user profile', function (done) {
+    it('using user profile', function (done) {
       request(app.getHttpServer())
         .get('/auth/profile')
         .set({ Authorization: `Bearer ${vars.userToken}` })
